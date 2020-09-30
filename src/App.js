@@ -1,26 +1,33 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {useState} from 'react';
 import './App.css';
+import {getId, getData} from "./service/http";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const App = () => {
+    const [data, changeData] = useState([]);
+
+    const getCityId = async () => {
+        let id;
+        await getId()
+            .then(response => response.json())
+            .then(json => id = json[0].woeid);
+        return await getData(id)
+            .then(response => response.json())
+            .then(json => changeData(json.consolidated_weather));
+    };
+    ;
+
+
+    return (
+        <div className="App">
+            {data.map(data => (
+                <div>
+                    {data.id}
+                </div>
+
+            ))}
+            <button onClick={getCityId}>Load info</button>
+        </div>
+    );
+};
 
 export default App;
